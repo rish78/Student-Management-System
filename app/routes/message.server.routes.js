@@ -214,5 +214,46 @@ Router.post('/courses/update/:id',function(req, res) {
     });
 });
 
+
+//get a single course
+Router.get('/courses/:id', function (req, res) {
+	let id = req.params.id;
+    Course.findById(id).then(function (course){
+        res.send(course);
+    }).catch(function (error) {
+        res.send(error);
+    });
+});
+
+//create a course
+Router.post('/courses', function (req,res) {
+    Course.create(req.body).then(function (course){
+        res.send(course);
+    }).catch(function (error) {
+        console.log(error);
+    });
+});
+
+//update course
+Router.post('/courses/update/:id',function(req, res) {
+    Course.findById(req.params.id, function(err, course) {
+        if (!course)
+            res.status(404).send("data is not found");
+        else
+            course.course_id = req.body.course_id;
+            course.course_name = req.body.course_name;
+            course.course_credit = req.body.course_credit;
+            course.course_instructor = req.body.course_instructor;
+            course.course_deleted = req.body.course_deleted;            
+
+            course.save().then(instructor => {
+                res.json('Course updated!');
+            })
+            .catch(err => {
+                res.status(400).send("Update not possible");
+            });
+    });
+});
+
 //export
 module.exports = Router;
